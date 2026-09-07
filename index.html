@@ -1,18 +1,910 @@
-
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Nan Dashboard</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>วนเกษตร 1 ไร่ 1 แสน</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Three.js -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+    <!-- Orbit Controls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+
+    <link rel="stylesheet"
+          href="style.css">
 </head>
+
 
 <body>
 
-    <h1>Nan Dashboard</h1>
+<!-- =========================================================
+     HEADER
+========================================================= -->
 
-    <p>เว็บไซต์ของฉันกำลังทำงาน!</p>
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🌳
+        </div>
+
+        <div>
+            <h1>วนเกษตร 1 ไร่ 1 แสน</h1>
+
+            <p>
+                Agroforestry Farm Planner
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <button
+            class="header-btn"
+            onclick="resetFarm()">
+
+            ↻ รีเซ็ต
+
+        </button>
+
+        <button
+            class="header-btn primary"
+            onclick="saveFarm()">
+
+            💾 บันทึกแปลง
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     MAIN LAYOUT
+========================================================= -->
+
+<main class="main-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- Farm summary -->
+
+        <section class="card farm-summary">
+
+            <h2>ข้อมูลแปลง</h2>
+
+            <div class="summary-grid">
+
+                <div class="summary-item">
+
+                    <span>พื้นที่</span>
+
+                    <strong>
+                        1 ไร่
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>ขนาด</span>
+
+                    <strong>
+                        40 × 40 m
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>ต้นทั้งหมด</span>
+
+                    <strong id="totalPlants">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>รายได้ประมาณ</span>
+
+                    <strong id="totalIncome">
+                        ฿0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CANOPY
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="section-title">
+
+                <h2>
+                    🌲 Canopy Layer
+                </h2>
+
+                <button
+                    class="small-btn"
+                    onclick="toggleAllLayers()">
+
+                    แสดงทั้งหมด
+
+                </button>
+
+            </div>
+
+
+            <div class="layer-list">
+
+
+                <label class="layer">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        data-layer="1"
+                        onchange="updateLayers()">
+
+                    <span class="layer-color layer-1"></span>
+
+                    <div>
+
+                        <strong>
+                            Layer 1
+                        </strong>
+
+                        <small>
+                            เรือนยอดบน
+                        </small>
+
+                    </div>
+
+                </label>
+
+
+                <label class="layer">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        data-layer="2"
+                        onchange="updateLayers()">
+
+                    <span class="layer-color layer-2"></span>
+
+                    <div>
+
+                        <strong>
+                            Layer 2
+                        </strong>
+
+                        <small>
+                            เรือนยอดกลาง
+                        </small>
+
+                    </div>
+
+                </label>
+
+
+                <label class="layer">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        data-layer="3"
+                        onchange="updateLayers()">
+
+                    <span class="layer-color layer-3"></span>
+
+                    <div>
+
+                        <strong>
+                            Layer 3
+                        </strong>
+
+                        <small>
+                            ไม้พุ่ม
+                        </small>
+
+                    </div>
+
+                </label>
+
+
+                <label class="layer">
+
+                    <input
+                        type="checkbox"
+                        checked
+                        data-layer="4"
+                        onchange="updateLayers()">
+
+                    <span class="layer-color layer-4"></span>
+
+                    <div>
+
+                        <strong>
+                            Layer 4
+                        </strong>
+
+                        <small>
+                            พืชคลุมดิน
+                        </small>
+
+                    </div>
+
+                </label>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PLANT LIST
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="section-title">
+
+                <h2>
+                    🌱 พืชในแปลง
+                </h2>
+
+                <button
+                    class="small-btn"
+                    onclick="openPlantModal()">
+
+                    + เพิ่มพืช
+
+                </button>
+
+            </div>
+
+
+            <div id="plantList"
+                 class="plant-list">
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             HARVEST
+        ================================================== -->
+
+        <section class="card">
+
+            <h2>
+                📅 ปฏิทินเก็บเกี่ยว
+            </h2>
+
+            <select
+                id="monthSelect"
+                onchange="updateHarvest()">
+
+                <option value="1">
+                    มกราคม
+                </option>
+
+                <option value="2">
+                    กุมภาพันธ์
+                </option>
+
+                <option value="3">
+                    มีนาคม
+                </option>
+
+                <option value="4">
+                    เมษายน
+                </option>
+
+                <option value="5">
+                    พฤษภาคม
+                </option>
+
+                <option value="6">
+                    มิถุนายน
+                </option>
+
+                <option value="7">
+                    กรกฎาคม
+                </option>
+
+                <option value="8">
+                    สิงหาคม
+                </option>
+
+                <option value="9">
+                    กันยายน
+                </option>
+
+                <option value="10">
+                    ตุลาคม
+                </option>
+
+                <option value="11">
+                    พฤศจิกายน
+                </option>
+
+                <option value="12">
+                    ธันวาคม
+                </option>
+
+            </select>
+
+            <div id="harvestList"
+                 class="harvest-list">
+
+            </div>
+
+        </section>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <section class="content">
+
+
+        <!-- =================================================
+             3D VIEW
+        ================================================== -->
+
+        <section class="card farm-view-card">
+
+            <div class="view-header">
+
+                <div>
+
+                    <h2>
+                        🌳 แผนผังแปลง 3D
+                    </h2>
+
+                    <p>
+                        คลิกและลากเพื่อหมุน • Scroll เพื่อ Zoom
+                    </p>
+
+                </div>
+
+
+                <div class="view-controls">
+
+                    <button
+                        onclick="topView()">
+
+                        มุมบน
+
+                    </button>
+
+                    <button
+                        onclick="frontView()">
+
+                        ด้านหน้า
+
+                    </button>
+
+                    <button
+                        onclick="perspectiveView()">
+
+                        Perspective
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div id="threeContainer"
+                 class="three-container">
+
+                <div class="loading">
+                    กำลังสร้างแปลง...
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STAT CARDS
+        ================================================== -->
+
+        <section class="stat-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🌳
+                </div>
+
+                <div>
+
+                    <span>
+                        เรือนยอดบน
+                    </span>
+
+                    <strong id="layer1Count">
+                        0 ต้น
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🌴
+                </div>
+
+                <div>
+
+                    <span>
+                        เรือนยอดกลาง
+                    </span>
+
+                    <strong id="layer2Count">
+                        0 ต้น
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🌿
+                </div>
+
+                <div>
+
+                    <span>
+                        ไม้พุ่ม
+                    </span>
+
+                    <strong id="layer3Count">
+                        0 ต้น
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🌱
+                </div>
+
+                <div>
+
+                    <span>
+                        พืชชั้นล่าง
+                    </span>
+
+                    <strong id="layer4Count">
+                        0 ต้น
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             INCOME CHART
+        ================================================== -->
+
+        <section class="card chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h2>
+                        💰 รายได้ประมาณการ 10 ปี
+                    </h2>
+
+                    <p>
+                        คำนวณจากผลผลิต × จำนวนต้น × ราคาขาย
+                    </p>
+
+                </div>
+
+                <div class="income-total">
+
+                    <span>
+                        รายได้รวม 10 ปี
+                    </span>
+
+                    <strong id="income10Year">
+                        ฿0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <canvas
+                id="incomeChart">
+            </canvas>
+
+        </section>
+
+
+        <!-- =================================================
+             PLANT TABLE
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="section-title">
+
+                <h2>
+                    📊 รายละเอียดพืช
+                </h2>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                พืช
+                            </th>
+
+                            <th>
+                                Layer
+                            </th>
+
+                            <th>
+                                ความสูง
+                            </th>
+
+                            <th>
+                                จำนวน
+                            </th>
+
+                            <th>
+                                ผลผลิต/ต้น
+                            </th>
+
+                            <th>
+                                ราคา
+                            </th>
+
+                            <th>
+                                รายได้/ปี
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="plantTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================================
+     PLANT MODAL
+========================================================= -->
+
+<div id="plantModal"
+     class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                เพิ่มพืช
+            </h2>
+
+            <button
+                onclick="closePlantModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <form id="plantForm">
+
+
+            <label>
+
+                ชื่อพืช
+
+                <input
+                    id="plantName"
+                    type="text"
+                    required
+                    placeholder="เช่น มะม่วง">
+
+            </label>
+
+
+            <label>
+
+                Canopy Layer
+
+                <select id="plantLayer">
+
+                    <option value="1">
+                        Layer 1 – เรือนยอดบน
+                    </option>
+
+                    <option value="2">
+                        Layer 2 – เรือนยอดกลาง
+                    </option>
+
+                    <option value="3">
+                        Layer 3 – ไม้พุ่ม
+                    </option>
+
+                    <option value="4">
+                        Layer 4 – พืชชั้นล่าง
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <div class="form-row">
+
+                <label>
+
+                    ความสูงต่ำสุด (m)
+
+                    <input
+                        id="heightMin"
+                        type="number"
+                        step="0.1"
+                        value="1">
+
+                </label>
+
+
+                <label>
+
+                    ความสูงสูงสุด (m)
+
+                    <input
+                        id="heightMax"
+                        type="number"
+                        step="0.1"
+                        value="3">
+
+                </label>
+
+            </div>
+
+
+            <label>
+
+                จำนวนต้น
+
+                <input
+                    id="plantQuantity"
+                    type="number"
+                    min="1"
+                    value="10">
+
+            </label>
+
+
+            <label>
+
+                ผลผลิตต่อต้น/ปี
+
+                <input
+                    id="plantYield"
+                    type="number"
+                    step="0.1"
+                    value="10">
+
+            </label>
+
+
+            <label>
+
+                ราคาขาย/หน่วย
+
+                <input
+                    id="plantPrice"
+                    type="number"
+                    value="20">
+
+            </label>
+
+
+            <label>
+
+                เดือนเริ่มเก็บเกี่ยว
+
+                <select id="harvestStart">
+
+                    <option value="1">
+                        มกราคม
+                    </option>
+
+                    <option value="2">
+                        กุมภาพันธ์
+                    </option>
+
+                    <option value="3">
+                        มีนาคม
+                    </option>
+
+                    <option value="4">
+                        เมษายน
+                    </option>
+
+                    <option value="5">
+                        พฤษภาคม
+                    </option>
+
+                    <option value="6">
+                        มิถุนายน
+                    </option>
+
+                    <option value="7">
+                        กรกฎาคม
+                    </option>
+
+                    <option value="8">
+                        สิงหาคม
+                    </option>
+
+                    <option value="9">
+                        กันยายน
+                    </option>
+
+                    <option value="10">
+                        ตุลาคม
+                    </option>
+
+                    <option value="11">
+                        พฤศจิกายน
+                    </option>
+
+                    <option value="12">
+                        ธันวาคม
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    onclick="closePlantModal()">
+
+                    ยกเลิก
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="primary">
+
+                    เพิ่มพืช
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     TOOLTIP
+========================================================= -->
+
+<div id="plantTooltip"
+     class="tooltip">
+
+</div>
+
+
+
+<script src="app.js"></script>
 
 </body>
+
 </html>
